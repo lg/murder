@@ -1,4 +1,191 @@
-Murder by Larry Gadea (lg@twitter.com)
-Copyright © 2009 Twitter Inc.
+Murder by Larry Gadea <lg@twitter.com>
+Copyright 2010 Twitter Inc.
 
-Murder is coming soon!
+DESCRIPTION
+-----------
+
+Murder is a method of using Bittorrent to distribute files to a large amount 
+of servers within a production environment. This allows for scaleable and fast
+deploys in environments of hundreds to tens of thousands of servers where
+centralized distribution systems wouldn't otherwise function.
+
+In order to do a Murder transfer, there are several components required to be 
+set up beforehand -- many the result of BitTorrent nature of the system. Murder
+is based on BitTornado.
+
+- A torrent tracker. This tracker, started by running the 'murder_tracker.py' 
+script, runs a self-contained server on one machine. Although technically this 
+is still a centralized system (everyone relying on this tracker), the 
+communication between this server and the rest is minimal and normally 
+acceptable. To keep things simple tracker-less distribution (DHT) is currently 
+not supported. The tracker is actually just a mini-httpd that hosts a 
+/announce path which the Bittorrent clients update their state onto.
+
+- A seeder. This is the server which has the files that you'd like to deploy 
+onto all other servers. For Twitter, this is the server that did the git diff. 
+The files are placed into a directory that a torrent gets created from. Murder 
+will tgz up the directory and create a .torrent file (a very small file 
+containing basic hash information about the tgz file). This .torrent file lets 
+the peers know what they're downloading. The tracker keeps track of which 
+.torrent files are currently being distributed. Once a Murder transfer is 
+started, the seeder will be the first server many machines go to to get 
+pieces. These pieces will then be distributed in a tree-fashion to the rest of 
+the network, but without necessarily getting the parts from the seeder.
+
+- Peers. This is the group of servers (hundreds to tens of thousands) which 
+will be receiving the files and distributing the pieces amongst themselves. 
+Once a peer is done downloading the entire tgz file, it will continue seeding 
+for a while to prevent a hotspot effect on the seeder.
+
+MURDER TRANSFER PROCESS
+-----------------------
+
+1. Configure the list of servers and general settings in config.rb. (one time)
+2. Distribute the Murder files to all your servers: (one time)
+    cap murder:distribute_files
+3. Start the tracker: (one time)
+    cap murder:start_tracker
+4. Create a torrent file from a remote directory of files (on seeder):
+    cap murder:create_torrent tag="Deploy20100101" files_path="~/files"
+5. Start seeding the files:
+    cap murder:start_seeding tag="Deploy20100101"
+6. Distribute the files to all servers:
+    cap murder:peer tag="Deploy20100101" destination_path="/tmp/out"
+
+Once completed, all files will be in /tmp/out/Deploy20091015/ on all servers.
+
+EXAMPLE DEPLOY
+--------------
+
+cap murder:distribute_files
+cap murder:start_tracker
+cap murder:create_torrent tag="Deploy20100101"
+  files_path="/usr/local/twitter/production/current"
+cap murder:start_seeding tag="Deploy20100101"
+time cap murder:peer tag="Deploy20100101"
+  destination_path="/usr/local/twitter/releases"
+
+All the files have been transferred to all servers at this point. To clean up
+use:
+
+cap murder:stop_seeding
+cap murder:stop_tracker
+
+HOW TO LEARN MURDER INCREMENTALLY
+---------------------------------
+
+- Skim dist/*.py to see what Murder does behind the scenes
+- Experiment with the python scripts
+- Read Capfile
+- Read murder_config.rb
+- Read murder_admin.rb
+- Read murder.rb
+- Read the reference below
+- Experiment with the Capistrano deploy methods
+- Read and experiment with the Capistrano strategy
+
+TASK REFERENCE
+--------------
+
+distribute_files: 
+  SCPs a compressed version of all files from ./dist (the python Bittorrent 
+library and custom scripts) to all server. The entire directory is sent, 
+regardless of the role of each individual server. The path on the server is 
+specified by remote_murder_path and will be cleared prior to transferring
+files over.
+
+start_tracker:
+  Starts the Bittorrent tracker (essentially a mini-web-server) listening on 
+port 8998.
+  
+stop_tracker:
+  If the Bittorrent tracker is running, this will kill the process. Note that 
+if it is not running you will receive an error.
+
+create_torrent:
+  Compresses the directory specified by the passed-in argument 'files_path' 
+and creates a .torrent file identified by the 'tag' argument. Be sure to use 
+the same 'tag' value with any following commands. Any .git directories will be 
+skipped. Once completed, the .torrent will be downloaded to your local 
+/tmp/TAG.tgz.torrent.
+  
+download_torrent:
+  Although not necessary to run, if the file from create_torrent was lost, you 
+can redownload it from the seeder using this task. You must specify a valid 
+'tag' argument.
+
+start_seeding:
+  Will cause the seeder machine to connect to the tracker and start seeding. 
+The ip address returned by the 'host' bash command will be announced to the 
+tracker. The server will not stop seeding until the stop_seeding task is 
+called. You must specify a valid 'tag' argument (which identifies the .torrent 
+in /tmp to use)
+  
+stop_seeding:
+  If the seeder is currently seeding, this will kill the process. Note that if 
+it is not running, you will receive an error. If a peer was downloading from 
+this seed, the peer will find another host to receive any remaining data. You 
+must specify a valid 'tag' argument.
+
+stop_all_seeding:
+  Identical to stop_seeding, except this will kill all seeding processes. No 
+'tag' argument is needed.
+
+peer:
+  Instructs all the peer servers to connect to the tracker and start download 
+and spreading pieces and files amongst themselves. You must specify a valid 
+'tag' argument. Once the download is complete on a server, that server will 
+fork the download process and seed for 30 seconds while returning control to 
+Capistrano. Cap will then extract the files to the passed in 
+'destination_path' argument to destination_path/TAG/*. To not create this tag 
+named directory, pass in the 'no_tag_directory=1' argument. If the directory 
+is empty, this command will fail. To clean it, pass in the 
+'unsafe_please_delete=1' argument. The compressed tgz in /tmp is never 
+removed. When this task completes, all files have been transferred and moved 
+into the requested directory.
+
+stop_all_peering:
+  Sometimes peers can go on forever (usually because of an error). This 
+command will forcibly kill all "murder_client.py peer" commands that are 
+running.
+
+CONFIG REFERENCE:
+
+user:
+  Provided by Capistrano to specify if to use a different username when sshing
+into machines.
+  
+host_suffix:
+  For the tracker_host, seeder_host and peers servers, this suffix will always 
+be added to the end when trying to connect to them.
+  
+default_tag:
+  A tag name to use by default such that a tag parameter doesn't need to be 
+manually entered on every task. Not recommended to be used since files will be 
+overwritten.
+
+default_seeder_files_path:
+  A path on the seeder's file system where the files to be distributed are 
+stored.
+
+default_destination_path:
+  A path on the peers' file system where the files that were distributed 
+should be decompressed into.
+
+tracker_host:
+  The hostname of a single tracker server. If you're using a host_suffix, do 
+not specify a suffix here.
+  
+tracker_port:
+  This is the port on which the mini-web-server tracker that the Bittorrent 
+libraries run is hosted on. Must be 8998 for now.
+
+seeder_host:
+  The hostname of a single seeder server. This server is the one that has all 
+the files that the peers want. If you're using a host_suffix, do not specify a 
+suffix here.
+
+peers:
+  A list of peers which will be receiving the files and distributing them 
+amongst themselves. If you're using a host_suffix, do not specify a suffix 
+here.
