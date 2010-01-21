@@ -7,7 +7,9 @@ DESCRIPTION
 Murder is a method of using Bittorrent to distribute files to a large amount 
 of servers within a production environment. This allows for scaleable and fast
 deploys in environments of hundreds to tens of thousands of servers where
-centralized distribution systems wouldn't otherwise function.
+centralized distribution systems wouldn't otherwise function. A "Murder" is
+normally used to refer to a flock of crows, which in this case applies to a
+bunch of servers doing something.
 
 In order to do a Murder transfer, there are several components required to be 
 set up beforehand -- many the result of BitTorrent nature of the system. Murder
@@ -82,7 +84,7 @@ HOW TO LEARN MURDER INCREMENTALLY
 - Read murder.rb
 - Read the reference below
 - Experiment with the Capistrano deploy methods
-- Read and experiment with the Capistrano strategy
+- Read and experiment with the Murder Capistrano strategy (coming soon!)
 
 TASK REFERENCE
 --------------
