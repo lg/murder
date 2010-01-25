@@ -84,7 +84,7 @@ HOW TO LEARN MURDER INCREMENTALLY
 - Read murder.rb
 - Read the reference below
 - Experiment with the Capistrano deploy methods
-- Read and experiment with the Murder Capistrano strategy (coming soon!)
+- Read and experiment with the Murder Capistrano strategy
 
 TASK REFERENCE
 --------------
@@ -191,3 +191,34 @@ peers:
   A list of peers which will be receiving the files and distributing them 
 amongst themselves. If you're using a host_suffix, do not specify a suffix 
 here.
+
+CAPISTRANO COPY STRATEGY
+------------------------
+
+In addition to being usable from both the commandline and Capistrano commands,
+an optional Capistrano copy strategy is included to help easily retrofit
+existing deploy environments you might already have.
+
+Requirements to use build.rb
+  - Add a require line for build.rb in your Capfile. This will override the
+    default build strategy. There are some other parameters you must now
+    specify though.
+  - To enable it, add the following to your Capfile:
+    load 'deploy'
+    set :strategy, Capistrano::Deploy::Strategy::Build.new(self)
+  - Add "set :murder, true" to your Capfile
+  - Make sure your release_name is correct (should be already)
+  - If you're distribution is a file instead of a directory,
+    Add "distribution_is_a_file" to your Capfile
+  - Add the following to your Capfile:
+    set :build_task do
+      "true"
+    end
+    set :copy_compression, :gz
+    set :package_name do
+      "#{release_name}-#{real_revision[0, 8]}.tar.#{copy_compression}"
+    end
+    set :branch, variables[:branch] || 'deploy'    
+     
+The requirements are a bit hefty for now, though hopefully this will get easier
+in the future.
