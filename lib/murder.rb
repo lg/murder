@@ -18,5 +18,5 @@ Capistrano::Configuration.instance(:must_exist).load do
   load_paths.push File.expand_path('../', __FILE__)
 
   load 'murder/murder'
-  load 'murder/murder_admin'
+  load 'murder/admin'
 end
