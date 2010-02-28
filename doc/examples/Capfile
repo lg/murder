@@ -21,6 +21,6 @@ after 'murder:stop_seeding', 'murder:stop_tracker'
 role :app, 'w01', 'w02', 'w03', 'w04', 'w05'
 
 # murder roles
-role :tracker, 'tracker.example.com', :no_release => true
-role :seeder, 'seeder.example.com', :no_release => true
+role(:tracker) { find_servers(:role => :app).first }
+role(:seeder) { find_servers(:role => :app).first }
 role(:peers) { find_servers(:role => :app) }
