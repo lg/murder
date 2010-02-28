@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "murder"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Large scale server deploys using BitTorrent and the BitTornado library}
+    gem.description = %Q{Large scale server deploys using BitTorrent and the BitTornado library}
     gem.email = "lg@twitter.com"
     gem.homepage = "http://github.com/lg/murder"
     gem.authors = ["Larry Gadea"]
