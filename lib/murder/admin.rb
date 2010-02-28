@@ -30,7 +30,7 @@ namespace :murder do
   end
 
   task :start_tracker, :roles => :tracker do
-    run("screen -dms murder_tracker python #{remote_murder_path}/murder_tracker.py", :pty => true)
+    run("screen -dms murder_tracker python #{remote_murder_path}/murder_tracker.py && sleep 0.2", :pty => true)
   end
 
   task :stop_tracker, :roles => :tracker do
