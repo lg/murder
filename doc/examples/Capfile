@@ -12,9 +12,6 @@ set :copy_exclude, '.git'
 # use murder
 set :deploy_via, :murder
 
-# murder settings
-set :remote_murder_path "/usr/local/murder"
-
 # convenient hooks
 after 'deploy:setup', 'murder:distribute_files' # setup remote murder support files on all hosts
 before 'murder:start_seeding', 'murder:start_tracker' # let deploy manage the tracker as well
