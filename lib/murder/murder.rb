@@ -13,16 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Generate roles based on config
-role(:tracker) { ["#{tracker_host}#{host_suffix}", {:no_release => true}] }
-role(:seeder) { ["#{seeder_host}#{host_suffix}", {:no_release => true}] }
-role :peer do
-  if respond_to? :peers
-    peers.map {|host| "#{host}#{host_suffix}" } + [{:no_release => true}]
-  else
-    []
-  end
-end
+# no default defaults...
+set :default_tag, ''
+set :default_seeder_files_path, ''
+set :default_destination_path, ''
 
 namespace :murder do
   task :create_torrent, :roles => :seeder do
@@ -37,6 +31,10 @@ namespace :murder do
     else
       run "tar -c -z -C #{seeder_files_path}/ -f #{filename} --exclude \".git*\" ."
     end
+
+    tracker = find_servers(:roles => :tracker).first
+    tracker_host = tracker.host
+    tracker_port = variables[:tracker_port] || '8998'
 
     run "python #{remote_murder_path}/murder_make_torrent.py '#{filename}' #{tracker_host}:#{tracker_port} '#{filename}.torrent'"
 
