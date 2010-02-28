@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Load the basic functionality from murder.rb
-load "murder"
-
 namespace :murder do
   task :distribute_files, :roles => [:tracker, :seeder, :peer] do
     dist_path = File.expand_path('../../dist', __FILE__)

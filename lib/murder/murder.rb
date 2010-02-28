@@ -13,10 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Be sure to import the murder config from your Capfile.
-# Note that you shouldn't need to modify this file unless you want to
-# change functionality.
-
 # Generate roles based on config
 role :tracker, "#{tracker_host}#{host_suffix}", :no_release => true
 role :seeder, "#{seeder_host}#{host_suffix}", :no_release => true
