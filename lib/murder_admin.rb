@@ -18,12 +18,14 @@ load "murder"
 
 namespace :murder do
   task :distribute_files, :roles => [:tracker, :seeder, :peer] do
+    dist_path = File.expand_path('../../dist', __FILE__)
+
     run "mkdir -p #{remote_murder_path}/"
     run "[ $(find '#{remote_murder_path}/'* | wc -l ) -lt 1000 ] && rm -rf '#{remote_murder_path}/'* || ( echo 'Cowardly refusing to remove files! Check the remote_murder_path.' ; exit 1 )"
 
     # TODO: Skip hidden (.*) files
     # TODO: Specifyable tmp file
-    system "tar -c -z -C dist -f /tmp/murder_dist.tgz ."
+    system "tar -c -z -C #{dist_path} -f /tmp/murder_dist.tgz ."
     upload("/tmp/murder_dist.tgz", "/tmp/murder_dist.tgz", :via => :sftp)
     run "tar xf /tmp/murder_dist.tgz -C #{remote_murder_path}"
     run "rm /tmp/murder_dist.tgz"
