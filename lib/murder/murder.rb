@@ -14,9 +14,15 @@
 # limitations under the License.
 
 # Generate roles based on config
-role :tracker, "#{tracker_host}#{host_suffix}", :no_release => true
-role :seeder, "#{seeder_host}#{host_suffix}", :no_release => true
-peers.each { |host| eval "role :peer, \"#{host}#{host_suffix}\", :no_release => true;" } if respond_to?(:peers)
+role(:tracker) { ["#{tracker_host}#{host_suffix}", {:no_release => true}] }
+role(:seeder) { ["#{seeder_host}#{host_suffix}", {:no_release => true}] }
+role :peer do
+  if respond_to? :peers
+    peers.map {|host| "#{host}#{host_suffix}" } + [{:no_release => true}]
+  else
+    []
+  end
+end
 
 namespace :murder do
   task :create_torrent, :roles => :seeder do
