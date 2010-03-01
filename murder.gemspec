@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Larry Gadea"]
-  s.date = %q{2010-02-27}
+  s.date = %q{2010-02-28}
   s.description = %q{Large scale server deploys using BitTorrent and the BitTornado library}
   s.email = %q{lg@twitter.com}
   s.extra_rdoc_files = [
@@ -17,7 +17,8 @@ Gem::Specification.new do |s|
      "README"
   ]
   s.files = [
-    "LICENSE",
+    ".gitignore",
+     "LICENSE",
      "README",
      "Rakefile",
      "VERSION",
