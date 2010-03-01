@@ -19,4 +19,25 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   load 'murder/murder'
   load 'murder/admin'
+
+  # no default defaults...
+  set :default_tag, ''
+  set :default_seeder_files_path, ''
+  set :default_destination_path, ''
+
+  # default remote dist path in app shared directory
+  set(:remote_murder_path) { "#{shared_path}/murder" }
+
+  # roles
+  excluded_roles = [:peer, :tracker, :seeder]
+
+  # get around the fact that find_servers does not work in role evaluation
+  # (it tries to evaluate all roles, leading to infinite recursion)
+  role :peer do
+    roles.reject{|k,v| excluded_roles.include? k }.values.map(&:servers).flatten.uniq.reject{|s| s.options[:no_release] }
+  end
+
+  role(:tracker) { roles[:peer].servers.first }
+  role(:seeder) { roles[:peer].servers.first }
+
 end
