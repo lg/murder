@@ -20,7 +20,9 @@ after 'murder:stop_seeding', 'murder:stop_tracker'
 # define an app server role
 role :app, 'w01', 'w02', 'w03', 'w04', 'w05'
 
-# murder roles
-role(:tracker) { find_servers(:role => :app).first }
-role(:seeder) { find_servers(:role => :app).first }
-role(:peers) { find_servers(:role => :app) }
+# murder roles (optional. seeder/tracker will default to the first deployable server) 
+role :tracker, 'tracker01'
+role :seeder, 'seeder01'
+# peer role defaults to all deployable servers (all except :no_release => true)
+# you shouldn't need to set this if you are using the deploy strategy.
+#role :peer, 'w01', 'w02', 'w03', 'w04', 'w05'
