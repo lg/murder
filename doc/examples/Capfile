@@ -1,0 +1,28 @@
+# Capfile with example murder config
+
+require 'rubygems'
+require 'murder'
+
+set :application, 'example-app'
+
+set :scm, 'git'
+set :repository, 'ssh://git.example.com/my/app.git'
+set :copy_exclude, '.git'
+
+# use murder
+set :deploy_via, :murder
+
+# convenient hooks
+after 'deploy:setup', 'murder:distribute_files' # setup remote murder support files on all hosts
+before 'murder:start_seeding', 'murder:start_tracker' # let deploy manage the tracker as well
+after 'murder:stop_seeding', 'murder:stop_tracker'
+
+# define an app server role
+role :app, 'w01', 'w02', 'w03', 'w04', 'w05'
+
+# murder roles (optional. seeder/tracker will default to the first deployable server) 
+role :tracker, 'tracker01'
+role :seeder, 'seeder01'
+# peer role defaults to all deployable servers (all except :no_release => true)
+# you shouldn't need to set this if you are using the deploy strategy.
+#role :peer, 'w01', 'w02', 'w03', 'w04', 'w05'

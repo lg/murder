@@ -13,14 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Be sure to import the murder config from your Capfile.
-# Note that you shouldn't need to modify this file unless you want to
-# change functionality.
+# no default defaults...
+set :default_tag, ''
+set :default_seeder_files_path, ''
+set :default_destination_path, ''
 
-# Generate roles based on config
-role :tracker, "#{tracker_host}#{host_suffix}", :no_release => true
-role :seeder, "#{seeder_host}#{host_suffix}", :no_release => true
-peers.each { |host| eval "role :peer, \"#{host}#{host_suffix}\", :no_release => true;" } if respond_to?(:peers)
+# default remote dist path in app shared directory
+set(:remote_murder_path) { "#{shared_path}/murder" }
 
 namespace :murder do
   task :create_torrent, :roles => :seeder do
@@ -35,6 +34,10 @@ namespace :murder do
     else
       run "tar -c -z -C #{seeder_files_path}/ -f #{filename} --exclude \".git*\" ."
     end
+
+    tracker = find_servers(:roles => :tracker).first
+    tracker_host = tracker.host
+    tracker_port = variables[:tracker_port] || '8998'
 
     run "python #{remote_murder_path}/murder_make_torrent.py '#{filename}' #{tracker_host}:#{tracker_port} '#{filename}.torrent'"
 
