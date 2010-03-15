@@ -9,7 +9,7 @@ begin
     gem.description = %Q{Large scale server deploys using BitTorrent and the BitTornado library}
     gem.email = "lg@twitter.com"
     gem.homepage = "http://github.com/lg/murder"
-    gem.authors = ["Larry Gadea"]
+    gem.authors = ["Larry Gadea", "Matt Freels"]
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

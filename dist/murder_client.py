@@ -1,5 +1,6 @@
 # Copyright 2010 Twitter, Inc.
 # Copyright 2010 Larry Gadea <lg@twitter.com>
+# Copyright 2010 Matt Freels <freels@twitter.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -27,7 +28,7 @@ if PSYCO.psyco:
         psyco.full()
     except:
         pass
-    
+
 from BitTornado.download_bt1 import BT1Download, defaults, parse_params, get_usage, get_response
 from BitTornado.RawServer import RawServer, UPnP_ERROR
 from random import seed
@@ -91,17 +92,17 @@ class HeadlessDisplayer:
 
     def finished(self):
         global doneFlag
-      
+
         self.done = True
         self.percentDone = '100'
         self.timeEst = 'Download Succeeded!'
         self.downRate = ''
         #self.display()
-        
+
         global isPeer
-        
+
         print "done and done"
-        
+
         if isPeer:
           if os.fork():
             os._exit(0)
@@ -118,7 +119,7 @@ class HeadlessDisplayer:
 
           t = threading.Timer(30.0, ok_close_now)
           t.start()
-        
+
     def failed(self):
         self.done = True
         self.percentDone = '0'
@@ -135,12 +136,12 @@ class HeadlessDisplayer:
         print errormsg
         doneFlag.set()
 
-    def display(self, dpflag = Event(), fractionDone = None, timeEst = None, 
+    def display(self, dpflag = Event(), fractionDone = None, timeEst = None,
             downRate = None, upRate = None, activity = None,
             statistics = None,  **kws):
         if self.last_update_time + 0.1 > clock() and fractionDone not in (0.0, 1.0) and activity is not None:
             return
-        self.last_update_time = clock()        
+        self.last_update_time = clock()
         if fractionDone is not None:
             self.percentDone = str(float(int(fractionDone * 1000)) / 10)
         if timeEst is not None:
@@ -174,7 +175,7 @@ class HeadlessDisplayer:
         #print 'seed status:   ', self.seedStatus
         #print 'peer status:   ', self.peerStatus
         #stdout.flush()
-        dpflag.set()        
+        dpflag.set()
 
     def chooseFile(self, default, size, saveas, dir):
         self.file = '%s (%.1f MB)' % (default, float(size) / (1 << 20))
@@ -212,7 +213,7 @@ def run(params):
 
         myid = createPeerID()
         seed(myid)
-        
+
         global doneFlag
         doneFlag = Event()
         def disp_exception(text):
@@ -245,7 +246,7 @@ def run(params):
         dow = BT1Download(h.display, h.finished, h.error, disp_exception, doneFlag,
                         config, response, infohash, myid, rawserver, listen_port,
                         configdir)
-        
+
         if not dow.saveAs(h.chooseFile, h.newpath):
             break
 
@@ -283,9 +284,9 @@ if __name__ == '__main__':
     sys.exit(1)
 
   argv = ["--responsefile", sys.argv[2],
-          "--saveas", sys.argv[3], 
+          "--saveas", sys.argv[3],
           "--ip", sys.argv[4]]
-  
+
   isPeer = sys.argv[1] == "peer"
-  
+
   run(argv[1:])
