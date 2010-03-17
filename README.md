@@ -118,17 +118,21 @@ To distribute a directory of files, first make sure that murder is set
 up on all hosts, then manually run the murder cap tasks:
 
 1. Start the tracker:
+
     cap murder:start_tracker
 
 2. Create a torrent from a directory of files on the seeder, and start seeding:
+
     scp -r ./files host1:~/files
     cap murder:create_torrent tag="Deploy1" files_path="~/files"
     cap murder:start_seeding tag="Deploy1"
 
 3. Distribute the torrent to all peers:
+
     cap murder:peer tag="Deploy1" destination_path="/tmp"
 
 4. Stop the seeder and tracker:
+
     cap murder:stop_seeding
     cap murder:stop_tracker
 
@@ -138,51 +142,51 @@ When this finishes, all peers will have the files in /tmp/Deploy1
 TASK REFERENCE
 --------------
 
-distribute_files:
+`distribute_files`:
   SCPs a compressed version of all files from ./dist (the python Bittorrent
 library and custom scripts) to all server. The entire directory is sent,
 regardless of the role of each individual server. The path on the server is
 specified by remote_murder_path and will be cleared prior to transferring
 files over.
 
-start_tracker:
+`start_tracker`:
   Starts the Bittorrent tracker (essentially a mini-web-server) listening on
 port 8998.
 
-stop_tracker:
+`stop_tracker`:
   If the Bittorrent tracker is running, this will kill the process. Note that
 if it is not running you will receive an error.
 
-create_torrent:
+`create_torrent`:
   Compresses the directory specified by the passed-in argument 'files_path'
 and creates a .torrent file identified by the 'tag' argument. Be sure to use
 the same 'tag' value with any following commands. Any .git directories will be
 skipped. Once completed, the .torrent will be downloaded to your local
 /tmp/TAG.tgz.torrent.
 
-download_torrent:
+`download_torrent`:
   Although not necessary to run, if the file from create_torrent was lost, you
 can redownload it from the seeder using this task. You must specify a valid
 'tag' argument.
 
-start_seeding:
+`start_seeding`:
   Will cause the seeder machine to connect to the tracker and start seeding.
 The ip address returned by the 'host' bash command will be announced to the
 tracker. The server will not stop seeding until the stop_seeding task is
 called. You must specify a valid 'tag' argument (which identifies the .torrent
 in /tmp to use)
 
-stop_seeding:
+`stop_seeding`:
   If the seeder is currently seeding, this will kill the process. Note that if
 it is not running, you will receive an error. If a peer was downloading from
 this seed, the peer will find another host to receive any remaining data. You
 must specify a valid 'tag' argument.
 
-stop_all_seeding:
+`stop_all_seeding`:
   Identical to stop_seeding, except this will kill all seeding processes. No
 'tag' argument is needed.
 
-peer:
+`peer`:
   Instructs all the peer servers to connect to the tracker and start download
 and spreading pieces and files amongst themselves. You must specify a valid
 'tag' argument. Once the download is complete on a server, that server will
@@ -195,7 +199,7 @@ is empty, this command will fail. To clean it, pass in the
 removed. When this task completes, all files have been transferred and moved
 into the requested directory.
 
-stop_all_peering:
+`stop_all_peering`:
   Sometimes peers can go on forever (usually because of an error). This
 command will forcibly kill all "murder_client.py peer" commands that are
 running.
@@ -206,20 +210,20 @@ CONFIG REFERENCE
 Variables
 ---------
 
-default_tag:
+`default_tag`:
   A tag name to use by default such that a tag parameter doesn't need to be
 manually entered on every task. Not recommended to be used since files will be
 overwritten.
 
-default_seeder_files_path:
+`default_seeder_files_path`:
   A path on the seeder's file system where the files to be distributed are
 stored.
 
-default_destination_path:
+`default_destination_path`:
   A path on the peers' file system where the files that were distributed
 should be decompressed into.
 
-remote_murder_path:
+`remote_murder_path`:
  A path where murder will look for its support files on each host. `cap
 murder:distribute_files` will upload murder support files here.
 
@@ -227,11 +231,11 @@ murder:distribute_files` will upload murder support files here.
 Roles
 -----
 
-tracker:
+`tracker`:
   Host on which to run the BitTorrent tracker
 
-seeder:
+`seeder`:
   Host which will be the source of the files to be distributed via BitTorrent
 
-peers:
+`peers`:
   All hosts to which files should be distributed
