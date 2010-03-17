@@ -14,15 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# no default defaults...
-set :default_tag, ''
-set :default_seeder_files_path, ''
-set :default_destination_path, ''
-
-# default remote dist path in app shared directory
-set(:remote_murder_path) { "#{shared_path}/murder" }
-
 namespace :murder do
+  desc <<-DESC
+  Compresses the directory specified by the passed-in argument 'files_path' and creates a .torrent file identified by the 'tag' argument. Be sure to use the same 'tag' value with any following commands. Any .git directories will be skipped. Once completed, the .torrent will be downloaded to your local /tmp/TAG.tgz.torrent.
+  DESC
   task :create_torrent, :roles => :seeder do
     require_tag
     if !(seeder_files_path = (default_seeder_files_path if default_seeder_files_path != "") || ENV['files_path'])
@@ -45,21 +40,33 @@ namespace :murder do
     download_torrent unless ENV['do_not_download_torrent']
   end
 
+  desc <<-DESC
+  Although not necessary to run, if the file from create_torrent was lost, you can redownload it from the seeder using this task. You must specify a valid 'tag' argument.
+  DESC
   task :download_torrent, :roles => :seeder do
     require_tag
     download("#{filename}.torrent", "#{filename}.torrent", :via => :scp)
   end
 
+  desc <<-DESC
+  Will cause the seeder machine to connect to the tracker and start seeding. The ip address returned by the 'host' bash command will be announced to the tracker. The server will not stop seeding until the stop_seeding task is called. You must specify a valid 'tag' argument (which identifies the .torrent in /tmp to use)
+  DESC
   task :start_seeding, :roles => :seeder do
     require_tag
     run "screen -dms 'seeder-#{tag}' python #{remote_murder_path}/murder_client.py seeder '#{filename}.torrent' '#{filename}' `host $HOSTNAME | awk '{print $4}'`"
   end
 
+  desc <<-DESC
+  If the seeder is currently seeding, this will kill the process. Note that if it is not running, you will receive an error. If a peer was downloading from this seed, the peer will find another host to receive any remaining data. You must specify a valid 'tag' argument.
+  DESC
   task :stop_seeding, :roles => :seeder do
     require_tag
     run("pkill -f \"SCREEN.*seeder-#{tag}\"")
   end
 
+  desc <<-DESC
+  Instructs all the peer servers to connect to the tracker and start download and spreading pieces and files amongst themselves. You must specify a valid 'tag' argument. Once the download is complete on a server, that server will fork the download process and seed for 30 seconds while returning control to Capistrano. Cap will then extract the files to the passed in 'destination_path' argument to destination_path/TAG/*. To not create this tag named directory, pass in the 'no_tag_directory=1' argument. If the directory is empty, this command will fail. To clean it, pass in the 'unsafe_please_delete=1' argument. The compressed tgz in /tmp is never removed. When this task completes, all files have been transferred and moved into the requested directory.
+  DESC
   task :peer, :roles => :peer do
     require_tag
 

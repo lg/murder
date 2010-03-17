@@ -15,6 +15,9 @@
 # limitations under the License.
 
 namespace :murder do
+  desc <<-DESC
+  SCPs a compressed version of all files from ./dist (the python Bittorrent library and custom scripts) to all server. The entire directory is sent, regardless of the role of each individual server. The path on the server is specified by remote_murder_path and will be cleared prior to transferring files over.
+  DESC
   task :distribute_files, :roles => [:tracker, :seeder, :peer] do
     dist_path = File.expand_path('../../dist', __FILE__)
 
@@ -30,18 +33,22 @@ namespace :murder do
     system "rm /tmp/murder_dist.tgz"
   end
 
+  desc "Starts the Bittorrent tracker (essentially a mini-web-server) listening on port 8998."
   task :start_tracker, :roles => :tracker do
     run("screen -dms murder_tracker python #{remote_murder_path}/murder_tracker.py && sleep 0.2", :pty => true)
   end
 
+  desc "If the Bittorrent tracker is running, this will kill the process. Note that if it is not running you will receive an error."
   task :stop_tracker, :roles => :tracker do
     run("pkill -f 'SCREEN.*murder_tracker.py'")
   end
 
+  desc "Identical to stop_seeding, except this will kill all seeding processes. No 'tag' argument is needed."
   task :stop_all_seeding, :roles => :seeder do
     run("pkill -f \"SCREEN.*seeder-\"")
   end
 
+  desc 'Sometimes peers can go on forever (usually because of an error). This command will forcibly kill all "murder_client.py peer" commands that are running.'
   task :stop_all_peering, :roles => :peer do
     run("pkill -f \"murder_client.py peer\"")
   end
