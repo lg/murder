@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{murder}
-  s.version = "0.0.0.pre"
+  s.version = "0.1.0"
 
-  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Larry Gadea"]
-  s.date = %q{2010-03-15}
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.authors = ["Larry Gadea", "Matt Freels"]
+  s.date = %q{2010-03-17}
   s.description = %q{Large scale server deploys using BitTorrent and the BitTornado library}
   s.email = %q{lg@twitter.com}
   s.extra_rdoc_files = [
