@@ -119,22 +119,22 @@ up on all hosts, then manually run the murder cap tasks:
 
 1. Start the tracker:
 
-    cap murder:start_tracker
+        cap murder:start_tracker
 
 2. Create a torrent from a directory of files on the seeder, and start seeding:
 
-    scp -r ./files host1:~/files
-    cap murder:create_torrent tag="Deploy1" files_path="~/files"
-    cap murder:start_seeding tag="Deploy1"
+        scp -r ./files host1:~/files
+        cap murder:create_torrent tag="Deploy1" files_path="~/files"
+        cap murder:start_seeding tag="Deploy1"
 
 3. Distribute the torrent to all peers:
 
-    cap murder:peer tag="Deploy1" destination_path="/tmp"
+        cap murder:peer tag="Deploy1" destination_path="/tmp"
 
 4. Stop the seeder and tracker:
 
-    cap murder:stop_seeding
-    cap murder:stop_tracker
+        cap murder:stop_seeding
+        cap murder:stop_tracker
 
 When this finishes, all peers will have the files in /tmp/Deploy1
 
