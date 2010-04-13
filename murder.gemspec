@@ -5,21 +5,21 @@
 
 Gem::Specification.new do |s|
   s.name = %q{murder}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Larry Gadea", "Matt Freels"]
-  s.date = %q{2010-03-17}
+  s.date = %q{2010-04-13}
   s.description = %q{Large scale server deploys using BitTorrent and the BitTornado library}
   s.email = %q{lg@twitter.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README"
+     "README.md"
   ]
   s.files = [
     ".gitignore",
      "LICENSE",
-     "README",
+     "README.md",
      "Rakefile",
      "VERSION",
      "dist/BitTornado/BT1/Choker.py",
