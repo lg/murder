@@ -19,7 +19,7 @@ namespace :murder do
   SCPs a compressed version of all files from ./dist (the python Bittorrent library and custom scripts) to all server. The entire directory is sent, regardless of the role of each individual server. The path on the server is specified by remote_murder_path and will be cleared prior to transferring files over.
   DESC
   task :distribute_files, :roles => [:tracker, :seeder, :peer] do
-    dist_path = File.expand_path('../../dist', __FILE__)
+    dist_path = File.expand_path('../../../dist', __FILE__)
 
     run "mkdir -p #{remote_murder_path}/"
     run "[ $(find '#{remote_murder_path}/'* | wc -l ) -lt 1000 ] && rm -rf '#{remote_murder_path}/'* || ( echo 'Cowardly refusing to remove files! Check the remote_murder_path.' ; exit 1 )"
