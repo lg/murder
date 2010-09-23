@@ -134,7 +134,7 @@ up on all hosts, then manually run the murder cap tasks:
 
 4. Stop the seeder and tracker:
 
-        cap murder:stop_seeding
+        cap murder:stop_seeding tag="Deploy1"
         cap murder:stop_tracker
 
 When this finishes, all peers will have the files in /tmp/Deploy1
