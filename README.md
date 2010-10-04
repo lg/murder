@@ -13,6 +13,9 @@ centralized distribution systems wouldn't otherwise function. A "Murder" is
 normally used to refer to a flock of crows, which in this case applies to a
 bunch of servers doing something.
 
+For an intro video, see:
+[Twitter - Murder Bittorrent Deploy System](http://vimeo.com/11280885)
+
 
 QUICK START
 -----------
