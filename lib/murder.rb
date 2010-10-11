@@ -35,7 +35,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   # get around the fact that find_servers does not work in role evaluation
   # (it tries to evaluate all roles, leading to infinite recursion)
   role :peer do
-    roles.reject{|k,v| excluded_roles.include? k }.values.map{|r| r.send(:servers)}.flatten.uniq.reject{|s| s.options[:no_release] }
+    roles.reject{|k,v| excluded_roles.include? k }.values.map{|r| r.servers }.flatten.uniq.reject{|s| s.options[:no_release] }
   end
 
   role(:tracker) { roles[:peer].servers.first }
