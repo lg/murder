@@ -13,6 +13,9 @@ centralized distribution systems wouldn't otherwise function. A "Murder" is
 normally used to refer to a flock of crows, which in this case applies to a
 bunch of servers doing something.
 
+For an intro video, see:
+[Twitter - Murder Bittorrent Deploy System](http://vimeo.com/11280885)
+
 
 QUICK START
 -----------
@@ -134,7 +137,7 @@ up on all hosts, then manually run the murder cap tasks:
 
 4. Stop the seeder and tracker:
 
-        cap murder:stop_seeding
+        cap murder:stop_seeding tag="Deploy1"
         cap murder:stop_tracker
 
 When this finishes, all peers will have the files in /tmp/Deploy1

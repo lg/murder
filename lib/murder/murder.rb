@@ -91,7 +91,7 @@ namespace :murder do
     end
 
     upload("#{filename}.torrent", "#{filename}.torrent", :via => :scp)
-    run "/usr/bin/time -f %e python #{remote_murder_path}/murder_client.py peer '#{filename}.torrent' '#{filename}' `host $CAPISTRANO:HOST$ | awk '{print $4}'`"
+    run "python #{remote_murder_path}/murder_client.py peer '#{filename}.torrent' '#{filename}' `host $CAPISTRANO:HOST$ | awk '{print $4}'`"
 
     if ENV['path_is_file']
       run "cp #{filename} #{destination_path}"
