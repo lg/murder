@@ -53,7 +53,7 @@ namespace :murder do
   DESC
   task :start_seeding, :roles => :seeder do
     require_tag
-    run "screen -dms 'seeder-#{tag}' python #{remote_murder_path}/murder_client.py seeder '#{filename}.torrent' '#{filename}' `host $HOSTNAME | awk '{print $4}'`"
+    run "screen -dms 'seeder-#{tag}' python #{remote_murder_path}/murder_client.py seeder '#{filename}.torrent' '#{filename}' `LC_ALL=C host $HOSTNAME | awk '/has address/ {print $4}' | head -n 1`"
   end
 
   desc <<-DESC
@@ -91,7 +91,7 @@ namespace :murder do
     end
 
     upload("#{filename}.torrent", "#{filename}.torrent", :via => :scp)
-    run "python #{remote_murder_path}/murder_client.py peer '#{filename}.torrent' '#{filename}' `host $CAPISTRANO:HOST$ | awk '{print $4}'`"
+    run "python #{remote_murder_path}/murder_client.py peer '#{filename}.torrent' '#{filename}' `LC_ALL=C host $CAPISTRANO:HOST$ | awk '/has address/ {print $4}' | head -n 1`"
 
     if ENV['path_is_file']
       run "cp #{filename} #{destination_path}"
