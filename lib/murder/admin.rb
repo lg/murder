@@ -35,7 +35,7 @@ namespace :murder do
 
   desc "Starts the Bittorrent tracker (essentially a mini-web-server) listening on port 8998."
   task :start_tracker, :roles => :tracker do
-    run("screen -dms murder_tracker python #{remote_murder_path}/murder_tracker.py && sleep 0.2", :pty => true)
+    run("SCREENRC=/dev/null SYSSCREENRC=/dev/null screen -dms murder_tracker python #{remote_murder_path}/murder_tracker.py && sleep 0.2", :pty => true)
   end
 
   desc "If the Bittorrent tracker is running, this will kill the process. Note that if it is not running you will receive an error."
