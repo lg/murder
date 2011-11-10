@@ -25,12 +25,13 @@ namespace :murder do
     run "[ $(find '#{remote_murder_path}/'* | wc -l ) -lt 1000 ] && rm -rf '#{remote_murder_path}/'* || ( echo 'Cowardly refusing to remove files! Check the remote_murder_path.' ; exit 1 )"
 
     # TODO: Skip hidden (.*) files
-    # TODO: Specifyable tmp file
-    system "tar -c -z -C #{dist_path} -f /tmp/murder_dist_to_upload.tgz ."
-    upload("/tmp/murder_dist_to_upload.tgz", "/tmp/murder_dist.tgz", :via => :sftp)
-    run "tar xf /tmp/murder_dist.tgz -C #{remote_murder_path}"
-    run "rm /tmp/murder_dist.tgz"
-    system "rm /tmp/murder_dist_to_upload.tgz"
+    tmp = ENV['temp_path'] || default_temp_path
+
+    system "tar -c -z -C #{dist_path} -f #{tmp}/murder_dist_to_upload.tgz ."
+    upload("#{tmp}/murder_dist_to_upload.tgz", "#{tmp}/murder_dist.tgz", :via => :sftp)
+    run "tar xf #{tmp}/murder_dist.tgz -C #{remote_murder_path}"
+    run "rm #{tmp}/murder_dist.tgz"
+    system "rm #{tmp}/murder_dist_to_upload.tgz"
   end
 
   desc "Starts the Bittorrent tracker (essentially a mini-web-server) listening on port 8998."

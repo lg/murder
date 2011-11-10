@@ -231,6 +231,9 @@ should be decompressed into.
  A path where murder will look for its support files on each host. `cap
 murder:distribute_files` will upload murder support files here.
 
+'default_temp_path':
+  The base path to use for temporary files, the default for this is '/tmp'. 
+This can be overridden with the 'temp_path' environment variable.
 
 Roles
 -----
