@@ -72,7 +72,7 @@ class SingleDownload:
             2+int(4*self.measure.get_rate()/self.downloader.chunksize),
             (2*just_unchoked)+self.downloader.queue_limit() )
         if self.backlog > 50:
-            self.backlog = max(50, self.backlog * 0.075)
+            self.backlog = max(50, int(self.backlog * 0.075))
         return self.backlog
     
     def disconnected(self):
