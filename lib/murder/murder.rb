@@ -124,6 +124,7 @@ namespace :murder do
     end
 
     set :tag, temp_tag
-    set :filename, "/tmp/#{tag}.tgz"
+    tmp = ENV['temp_path'] || default_temp_path
+    set :filename, "#{tmp}/#{tag}.tgz"
   end
 end
