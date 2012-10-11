@@ -1,6 +1,6 @@
 Murder by Larry Gadea <lg@twitter.com> and Matt Freels <freels@twitter.com>  
 
-Copyright 2010 Twitter Inc.
+Copyright 2010-2012 Twitter Inc.
 
 
 DESCRIPTION
