@@ -2,6 +2,7 @@ Murder by Larry Gadea <lg@twitter.com> and Matt Freels <freels@twitter.com>
 
 Copyright 2010-2012 Twitter Inc.
 
+**WARNING: This project, though still functional, is no longer maintained**
 
 DESCRIPTION
 -----------
